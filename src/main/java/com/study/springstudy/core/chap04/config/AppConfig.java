@@ -1,6 +1,6 @@
 package com.study.springstudy.core.chap04.config;
 
-import com.study.springstudy.core.chap03.*;
+import com.study.springstudy.core.chap04.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;

@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 
 // 스프링에게 객체 생성 등의 제어를 맡길때 사용하는 어노테이션.
 // 수동으로 Bean(객체)를 등록할때 클래스에 선언하는 문법.
-@Configuration
+//@Configuration
 public class AppConfig {
 
     @Bean   // 메서드에서 특정 객체가 생성되어 리턴될때 객체의 생명주기를 Spring이 관리하도록 설정.

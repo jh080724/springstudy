@@ -11,12 +11,15 @@ public interface ScoreRepository {
     void save(Score score);
 
     //저장소에서 데이터 전체 조회하기
-    List<Score> findAll();
+    List<Score> findAll(String sort);
 
     //저장소에서 데이터 개벌 조회하기
     Score findOne(int stuNum);
 
     // 저장소에서 데이터 삭제하기
     void delete(int stuNum);
+
+    // 저장소에서 데이터 수정(업데이트)하기
+    void update(Score score);
 
 }

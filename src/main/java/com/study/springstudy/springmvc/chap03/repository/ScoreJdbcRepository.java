@@ -64,9 +64,20 @@ public class ScoreJdbcRepository implements ScoreRepository{
     }
 
     @Override
-    public List<Score> findAll() {
+    public List<Score> findAll(String sort) {
         String sql = "SELECT * FROM score";
 
+        switch (sort){
+            case "num":
+                sql += " ORDER BY stu_num";
+                break;
+            case "name":
+                sql += " ORDER BY stu_name";
+                break;
+            case "avg":
+                sql += " ORDER BY average DESC";
+                break;
+        }
         // 여러 행이 조회될때는 query()를 호출
         // sql, RowMapper 인터페이스를 구현한 객체를 전달
         // 조회된 내용을 어떤 방식으로 포장할지를 알려 줘야 한다.(테이블은 컬럼의 타입
@@ -93,6 +104,23 @@ public class ScoreJdbcRepository implements ScoreRepository{
         String sql = "DELETE FROM score WHERE stu_num=?";
         jdbcTemplate.update(sql, stuNum);
 
+    }
+
+    @Override
+    public void update(Score score) {
+        String sql = "UPDATE score " +
+                "SET kor=?, eng=?, math=?, total=?, average=?, grade=? " +
+                "WHERE stu_num=?";
+        jdbcTemplate.update(sql,
+                score.getKor(),
+                score.getEng(),
+                score.getMath(),
+                score.getTotal(),
+                score.getAverage(),
+                score.getGrade().toString(),
+                score.getStuNum()
+        );
+        System.out.println("[dbg] sql = " + sql);
     }
 
 }

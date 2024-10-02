@@ -36,7 +36,7 @@ class ScoreJdbcRepositoryTest {
         // given - 테스트에 필요한 값을 세팅
 
         // when - 테스트 주요 코드 실행(테스트 실행 목표)
-        List<Score> scoreList = repository.findAll();
+        List<Score> scoreList = repository.findAll("num");
         System.out.println("scoreList = " + scoreList); // 단언기법 결과에 영향을 줄수 있으므로 실제 검증에서는 출력문 확인 지양.
 
         // then - 테스트 결과를 검증(테스트기법: Assertion: 단언기법(<- 단언컨데의 단언))
@@ -74,5 +74,24 @@ class ScoreJdbcRepositoryTest {
         // then
         assertNull(score);
 
+    }
+
+    @Test
+    @DisplayName("7번 학생의 국어, 수학 점수를 수정 후 다시 조회하면 수정된 데이터가 조회되어야 함.")
+    void upateTest() {
+        // given
+        int stuNum = 7, kor=76, math=68;
+        Score score = repository.findOne(stuNum);
+        ScorePostDTO dto = new ScorePostDTO(score.getStuName(), kor, score.getEng(), math);
+
+        // when
+        Score score2 = new Score(dto);
+        score2.setStuNum(stuNum);
+        repository.update(score2);
+
+        // then
+        Score changeScore = repository.findOne(stuNum);
+        System.out.println("changeScore = " + changeScore);
+        assertNotEquals(score.getTotal(), changeScore.getTotal());
     }
 }

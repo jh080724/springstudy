@@ -33,5 +33,7 @@ public class ScoreController {
     public String register(ScorePostDTO dto) {
         System.out.println("[dbg] /score/register: POST!");
         System.out.println("[dbg] dto = " + dto);
+
+        return null;
     }
 }

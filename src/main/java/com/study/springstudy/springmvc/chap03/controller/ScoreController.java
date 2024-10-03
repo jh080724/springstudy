@@ -92,7 +92,7 @@ public class ScoreController {
     // 수정이 완료된 후 사용자에게 응답할 페이지는
     // 최신 수정 내용이 반영된 detail 페이지 입니다. -> redirect
     @PostMapping("/modify")
-    public String modify(ScoreResponseDTO dto,  // kor, eng, math는 dto로 받고
+    public String modify(ScorePostDTO dto,  // kor, eng, math는 dto로 받고
                          @RequestParam int stuNum){ // stuNum은 dto가 못 받으니까 따로 받음.
         service.update(dto, stuNum);
 

@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 
 @Service    // Bean 등록
 @RequiredArgsConstructor
-
 public class ScoreService {
     private final ScoreJdbcRepository repository;
 
@@ -43,6 +42,7 @@ public class ScoreService {
 //
 //        return dtoList;
         List<Score> scoreList = repository.findAll(sort);
+
 
         return scoreList
                 .stream()
@@ -65,7 +65,7 @@ public class ScoreService {
         repository.delete(stuNum);
     }
 
-    public void update(ScoreResponseDTO dto, int stuNum) {
+    public void update(ScorePostDTO dto, int stuNum) {
         Score changeScore = new Score(dto);
         changeScore.setStuNum(stuNum);
         repository.update(changeScore);

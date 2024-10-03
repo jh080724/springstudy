@@ -42,6 +42,7 @@ public class ScoreResponseDTO {
             maskedName.append("*");
         }
 
+        System.out.println("[dbg] maskedName = " + maskedName);
         return maskedName.toString();
     }
 }

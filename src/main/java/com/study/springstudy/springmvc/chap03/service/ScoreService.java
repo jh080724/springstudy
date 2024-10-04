@@ -12,6 +12,7 @@ package com.study.springstudy.springmvc.chap03.service;
 import com.study.springstudy.springmvc.chap03.dto.ScorePostDTO;
 import com.study.springstudy.springmvc.chap03.dto.ScoreResponseDTO;
 import com.study.springstudy.springmvc.chap03.entity.Score;
+import com.study.springstudy.springmvc.chap03.mapper.ScoreMapper;
 import com.study.springstudy.springmvc.chap03.repository.ScoreJdbcRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,8 @@ import java.util.stream.Collectors;
 @Service    // Bean 등록
 @RequiredArgsConstructor
 public class ScoreService {
-    private final ScoreJdbcRepository repository;
+//    private final ScoreJdbcRepository repository;  // Spring JDBC 적용
+    private final ScoreMapper repository;  // MyBatis 적용
 
     public List<ScoreResponseDTO> findAll(String sort) {
         /*

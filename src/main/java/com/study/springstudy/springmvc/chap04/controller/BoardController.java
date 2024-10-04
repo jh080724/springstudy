@@ -1,11 +1,13 @@
 package com.study.springstudy.springmvc.chap04.controller;
 
 import com.study.springstudy.springmvc.chap04.dto.BoardListReponseDTO;
+import com.study.springstudy.springmvc.chap04.dto.BoardWriteRequestDTO;
 import com.study.springstudy.springmvc.chap04.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
@@ -28,7 +30,8 @@ import java.util.List;
       - resp. data: 없음
 
     3. 글쓰기 등록 요청(/board/write : POST)
-      - Req. data: writer, title, content --> 모두 문자열 타입
+      - Req. data: writer, title, content --> 모두 문자열 타입 (BoardWriteRequestDTO)
+                    DTO를 board로 바꿔서 mapper에게 전달해야 함. -> Board의 생성자를 이용.
       - response: 글 목록 페이지 요청 다시 들어오게끔(redirect)
       - resp. data: 없음
 
@@ -56,8 +59,15 @@ public class BoardController {
         return "chap04/list";
     }
 
-    @GetMapping("write")
-    public String write(){
+    @GetMapping("/write")
+    public String write() {
         return "chap04/write";
+    }
+
+    @PostMapping("/write")
+    public String write(BoardWriteRequestDTO dto) {
+        System.out.println("[dbg] dto = " + dto);
+        boardService.register(dto);
+        return "redirect:/board/list";
     }
 }

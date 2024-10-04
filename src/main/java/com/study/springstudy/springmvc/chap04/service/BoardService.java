@@ -1,6 +1,7 @@
 package com.study.springstudy.springmvc.chap04.service;
 
 import com.study.springstudy.springmvc.chap04.dto.BoardListReponseDTO;
+import com.study.springstudy.springmvc.chap04.dto.BoardWriteRequestDTO;
 import com.study.springstudy.springmvc.chap04.entity.Board;
 import com.study.springstudy.springmvc.chap04.mapper.BoardMapper;
 import lombok.RequiredArgsConstructor;
@@ -30,5 +31,9 @@ public class BoardService {
         return boardList.stream()
                 .map(BoardListReponseDTO::new)
                 .collect(Collectors.toList());
+    }
+
+    public void register(BoardWriteRequestDTO dto) {
+        mapper.save(new Board(dto)); // dto를 entity로 변환해서 mapper에게 전달.
     }
 }

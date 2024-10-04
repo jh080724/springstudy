@@ -74,11 +74,11 @@ public class BoardController {
     public String detail(@PathVariable("bno") int bno, Model model){ // 기존에는 @RequestParam int bno 사용
 
         BoardDetailResponseDTO dto = boardService.getDetail(bno);
+
         System.out.println("[dbg] bno = " + bno);
 
-        model.addAttribute();
-        boardService.getDetail(bno);
+        model.addAttribute("b", dto);
 
-        return null;
+        return "chap04/detail";
     }
 }

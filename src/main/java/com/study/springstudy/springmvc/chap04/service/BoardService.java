@@ -1,5 +1,6 @@
 package com.study.springstudy.springmvc.chap04.service;
 
+import com.study.springstudy.springmvc.chap04.dto.BoardDetailResponseDTO;
 import com.study.springstudy.springmvc.chap04.dto.BoardListReponseDTO;
 import com.study.springstudy.springmvc.chap04.dto.BoardWriteRequestDTO;
 import com.study.springstudy.springmvc.chap04.entity.Board;
@@ -35,5 +36,11 @@ public class BoardService {
 
     public void register(BoardWriteRequestDTO dto) {
         mapper.save(new Board(dto)); // dto를 entity로 변환해서 mapper에게 전달.
+    }
+
+    public BoardDetailResponseDTO getDetail(int bno) {
+        mapper.updateViewCount(bno);
+        Board board = mapper.findOne(bno);
+        return new BoardDetailResponseDTO(board);
     }
 }

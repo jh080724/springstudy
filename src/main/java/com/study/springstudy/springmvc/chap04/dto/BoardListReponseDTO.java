@@ -29,7 +29,7 @@ public class BoardListReponseDTO {  // BoardList의 응답용 DTO
         this.writer = board.getWriter();
     }
 
-    private String makePrettierDateString(LocalDateTime regDate) {
+    public static String makePrettierDateString(LocalDateTime regDate) {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         return dtf.format(regDate);
     }

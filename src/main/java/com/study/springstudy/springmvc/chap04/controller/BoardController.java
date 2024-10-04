@@ -1,14 +1,13 @@
 package com.study.springstudy.springmvc.chap04.controller;
 
+import com.study.springstudy.springmvc.chap04.dto.BoardDetailResponseDTO;
 import com.study.springstudy.springmvc.chap04.dto.BoardListReponseDTO;
 import com.study.springstudy.springmvc.chap04.dto.BoardWriteRequestDTO;
 import com.study.springstudy.springmvc.chap04.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -40,8 +39,8 @@ import java.util.List;
       - response: chap04/write.jsp
       - resp. data: 글 목록 페이지 요청 다시 들어오게끔(redirect)
 
-    5. 글 상세보기 요청(/board/detail : GET)
-      - Req. data: boardNo --> int 타입
+    5. 글 상세보기 요청(/board/detail/글번호 : GET)
+      - Req. data: url경로에 글번호가 문어옴.
       - response: chap04/detail.jsp
       - resp. data: Model에 특정 게시글 정보를 담아서 리턴
 
@@ -69,5 +68,17 @@ public class BoardController {
         System.out.println("[dbg] dto = " + dto);
         boardService.register(dto);
         return "redirect:/board/list";
+    }
+
+    @GetMapping("/detail/{bno}") //경로에 변수가 들어있음
+    public String detail(@PathVariable("bno") int bno, Model model){ // 기존에는 @RequestParam int bno 사용
+
+        BoardDetailResponseDTO dto = boardService.getDetail(bno);
+        System.out.println("[dbg] bno = " + bno);
+
+        model.addAttribute();
+        boardService.getDetail(bno);
+
+        return null;
     }
 }

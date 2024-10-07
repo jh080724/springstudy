@@ -3,13 +3,16 @@ package com.study.springstudy.springmvc.chap04.service;
 import com.study.springstudy.springmvc.chap04.dto.BoardDetailResponseDTO;
 import com.study.springstudy.springmvc.chap04.dto.BoardListReponseDTO;
 import com.study.springstudy.springmvc.chap04.dto.BoardWriteRequestDTO;
+import com.study.springstudy.springmvc.chap04.dto.PageDTO;
 import com.study.springstudy.springmvc.chap04.entity.Board;
 import com.study.springstudy.springmvc.chap04.mapper.BoardMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -20,18 +23,32 @@ public class BoardService {
     private final BoardMapper mapper; // @RequiredArgsConstructor 선언해서 주입해주어야 함.
 
     // mapper로부터 전달받은 entity list를 dto list로 변환해서 컨트롤로에게 리턴
-    public List<BoardListReponseDTO> getList() {
+//    public List<BoardListReponseDTO> getList(PageDTO page) {
+    public Map<String, Object> getList(PageDTO page) {
 
-        List<Board> boardList = mapper.findAll();
+        // 전체 게시글을 가지고 오는 것이 아닌, 특정 페이지 부분만 가져와야 함.
+        List<Board> boardList = mapper.findAll(page);
+        PageMaker pageMaker = new PageMaker(mapper.getTotalCount(), page);
 //        List<BoardListReponseDTO> dtoListst = new ArrayList<>(); // stream()으로 처리하여 주석처리.
 
 //        return boardList.stream()
 //                .map(board -> new BoardListReponseDTO(board))
 //                .collect(Collectors.toList()); --> 아래코드 31 라인 메소드 참조로 변환
 
-        return boardList.stream()
+        // DTO로 변경
+//        return boardList.stream()
+//                .map(BoardListReponseDTO::new)
+//                .collect(Collectors.toList());
+
+        List<BoardListReponseDTO> dtoList = boardList.stream()
                 .map(BoardListReponseDTO::new)
                 .collect(Collectors.toList());
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("bList", dtoList);
+        result.put("pm", pageMaker);
+
+        return result;
     }
 
     public void register(BoardWriteRequestDTO dto) {

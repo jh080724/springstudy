@@ -1,8 +1,10 @@
 package com.study.springstudy.springmvc.chap04.controller;
 
+import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 import com.study.springstudy.springmvc.chap04.dto.BoardDetailResponseDTO;
 import com.study.springstudy.springmvc.chap04.dto.BoardListReponseDTO;
 import com.study.springstudy.springmvc.chap04.dto.BoardWriteRequestDTO;
+import com.study.springstudy.springmvc.chap04.dto.PageDTO;
 import com.study.springstudy.springmvc.chap04.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -10,6 +12,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /*
     요구사항 명세
@@ -51,10 +55,13 @@ import java.util.List;
 public class BoardController {
     private final BoardService boardService;
 
+    // 목록 요청(페이징을 곁들인)
     @GetMapping("/list")
-    public String list(Model model) {
-        List<BoardListReponseDTO> list = boardService.getList();// 서비스에 맡긴다. 서비스에 메소드 안만들어져 있는 상태라서 alt+enter로 BoardService에 메소드를 생성시킨다.
-        model.addAttribute("bList", list);
+    public String list(Model model, PageDTO page) {
+//        List<BoardListReponseDTO> list = boardService.getList(page);// 서비스에 맡긴다. 서비스에 메소드 안만들어져 있는 상태라서 alt+enter로 BoardService에 메소드를 생성시킨다.
+        Map<String, Object> map = boardService.getList(page);
+        model.addAttribute("bList", map.get("bList"));
+        model.addAttribute("maker", map.get("pm"));
         return "chap04/list";
     }
 
@@ -71,13 +78,17 @@ public class BoardController {
     }
 
     @GetMapping("/detail/{bno}") //경로에 변수가 들어있음
-    public String detail(@PathVariable("bno") int bno, Model model) { // 기존에는 @RequestParam int bno 사용
+    public String detail(@PathVariable("bno") int bno,
+                         // Model에 직접 데이터를 담는 로직을 생략할 수 있는 @ModelAttribute
+                         @ModelAttribute("p") PageDTO page,
+                         Model model) { // 기존에는 @RequestParam int bno 사용
 
         BoardDetailResponseDTO dto = boardService.getDetail(bno);
 
         System.out.println("[dbg] bno = " + bno);
 
         model.addAttribute("b", dto);
+//        model.addAttribute("p", page);  // @ModelAttribute 사용으로 주석처리함.
 
         return "chap04/detail";
     }

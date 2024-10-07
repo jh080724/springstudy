@@ -1,5 +1,5 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page language="java" contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -132,10 +132,13 @@
     <div id="content">${b.content}</div>
     <div class="buttons">
         <button class="list-btn" type="button"
-                onclick="location.href='/board/list'">
+                onclick="location.href='/board/list?pageNo=${p.pageNo}&amount=${p.amount}'">
             목록
         </button>
     </div>
+
+
+
     <!-- 댓글 영역 -->
     <div id="replies" class="row">
         <div class="offset-md-1 col-md-10">

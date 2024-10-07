@@ -43,4 +43,8 @@ public class BoardService {
         Board board = mapper.findOne(bno);
         return new BoardDetailResponseDTO(board);
     }
+
+    public void delete(int boardNo) {
+        mapper.delete(boardNo);
+    }
 }

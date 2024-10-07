@@ -71,7 +71,7 @@ public class BoardController {
     }
 
     @GetMapping("/detail/{bno}") //경로에 변수가 들어있음
-    public String detail(@PathVariable("bno") int bno, Model model){ // 기존에는 @RequestParam int bno 사용
+    public String detail(@PathVariable("bno") int bno, Model model) { // 기존에는 @RequestParam int bno 사용
 
         BoardDetailResponseDTO dto = boardService.getDetail(bno);
 
@@ -80,5 +80,13 @@ public class BoardController {
         model.addAttribute("b", dto);
 
         return "chap04/detail";
+    }
+
+    @PostMapping("/delete")
+    public String delete(@RequestParam int boardNo) {
+        System.out.println("[dbg] /board/delete: POST!!" + boardNo);
+        boardService.delete(boardNo);
+
+        return "redirect:/board/list";
     }
 }

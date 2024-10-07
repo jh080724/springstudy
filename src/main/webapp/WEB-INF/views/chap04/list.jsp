@@ -93,6 +93,11 @@
     </div>
 </div>
 </div>
+<!-- 게시글 삭제용 form -->
+<form action="/board/delete" method="post" name="removeForm">
+    <input type="hidden" id="remove-bno" name="boardNo">
+</form>
+
 <!-- 모달 창 -->
 <div class="modal" id="modal">
     <div class="modal-content">
@@ -128,12 +133,20 @@
             // 삭제 취소 버튼 클릭 이벤트
             $cancelDelete.onclick = () => {
                 $modal.style.display = 'none';
+
+
             }
 
             // 삭제 확인 버튼 클릭 이벤트
             $confirmDelete.onclick = () => {
                 // js로 form을 생성할 수 있음. -> post로 요청 보낼 것.
-                const formData = new FormData();
+                // js FormData()는 비동기 전용 요청임;
+                // 1. form 객체를 js로 생성해서 submit
+                // - const formData = new FormData();
+                // 2. html form 태그를 작성해서 submit <-- 이번 실습에는 html form을 사용할 것임.;
+
+                document.getElementById("remove-bno").value=delTargetBno;
+                document.removeForm.submit();
             }
 
         }

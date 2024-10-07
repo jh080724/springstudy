@@ -1,10 +1,7 @@
 package com.study.springstudy.springmvc.chap04.controller;
 
 import com.fasterxml.jackson.annotation.ObjectIdGenerator;
-import com.study.springstudy.springmvc.chap04.dto.BoardDetailResponseDTO;
-import com.study.springstudy.springmvc.chap04.dto.BoardListReponseDTO;
-import com.study.springstudy.springmvc.chap04.dto.BoardWriteRequestDTO;
-import com.study.springstudy.springmvc.chap04.dto.PageDTO;
+import com.study.springstudy.springmvc.chap04.dto.*;
 import com.study.springstudy.springmvc.chap04.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -55,9 +52,9 @@ import java.util.Objects;
 public class BoardController {
     private final BoardService boardService;
 
-    // 목록 요청(페이징을 곁들인)
+    // 목록 요청(페이징과 검색 기능을 곁들인)
     @GetMapping("/list")
-    public String list(Model model, PageDTO page) {
+    public String list(Model model, @ModelAttribute("s") SearchDTO page) {
 //        List<BoardListReponseDTO> list = boardService.getList(page);// 서비스에 맡긴다. 서비스에 메소드 안만들어져 있는 상태라서 alt+enter로 BoardService에 메소드를 생성시킨다.
         Map<String, Object> map = boardService.getList(page);
         model.addAttribute("bList", map.get("bList"));
@@ -80,7 +77,7 @@ public class BoardController {
     @GetMapping("/detail/{bno}") //경로에 변수가 들어있음
     public String detail(@PathVariable("bno") int bno,
                          // Model에 직접 데이터를 담는 로직을 생략할 수 있는 @ModelAttribute
-                         @ModelAttribute("p") PageDTO page,
+                         @ModelAttribute("s") SearchDTO page,
                          Model model) { // 기존에는 @RequestParam int bno 사용
 
         BoardDetailResponseDTO dto = boardService.getDetail(bno);

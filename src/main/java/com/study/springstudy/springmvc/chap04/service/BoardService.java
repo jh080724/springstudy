@@ -24,11 +24,11 @@ public class BoardService {
 
     // mapper로부터 전달받은 entity list를 dto list로 변환해서 컨트롤로에게 리턴
 //    public List<BoardListReponseDTO> getList(PageDTO page) {
-    public Map<String, Object> getList(PageDTO page) {
+    public Map<String, Object> getList(PageDTO page) { // SearchDTO가 넘어옴.
 
         // 전체 게시글을 가지고 오는 것이 아닌, 특정 페이지 부분만 가져와야 함.
         List<Board> boardList = mapper.findAll(page);
-        PageMaker pageMaker = new PageMaker(mapper.getTotalCount(), page);
+        PageMaker pageMaker = new PageMaker(mapper.getTotalCount(page), page);
 //        List<BoardListReponseDTO> dtoListst = new ArrayList<>(); // stream()으로 처리하여 주석처리.
 
 //        return boardList.stream()

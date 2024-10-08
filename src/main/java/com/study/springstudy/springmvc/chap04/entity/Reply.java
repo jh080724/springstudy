@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Reply {
     private int replyNo;
     private String replyText;

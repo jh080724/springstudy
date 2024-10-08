@@ -17,7 +17,7 @@ public interface ReplyMapper {
     void delete(int replyNo);
 
     // 댓글 개별 조회
-    Reply findOne(int replNo);
+    Reply findOne(int replyNo);
 
     // 댓글 전체 목록 조회
     List<Reply> findAll(int boardNo);

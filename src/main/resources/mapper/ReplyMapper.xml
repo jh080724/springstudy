@@ -6,10 +6,37 @@
 <mapper namespace="com.study.springstudy.springmvc.chap04.mapper.ReplyMapper">
 
     <insert id="save">
-        INSERT INTO tbl_rep;ly
+        INSERT INTO tbl_reply
             (reply_text, reply_writer, board_no)
         VALUES
             (#{replyText},#{replyWriter},#{boardNo})
     </insert>
+
+    <select id="findAll" resultType="reply">
+        SELECT * FROM tbl_reply
+        WHERE board_no = #{boardNo}
+        ORDER BY reply_no
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT COUNT(*) FROM tbl_reply
+        WHERE board_no = #{boardNo}
+    </select>
+
+    <delete id="delete">
+        DELETE FROM tbl_reply
+        WHERE reply_no = #{replyNo}
+    </delete>
+
+    <update id="modify">
+        UPDATE tbl_reply
+        SET reply_text = #{replyText}
+        WHERE reply_no = #{replyNo}
+    </update>
+
+    <select id="findOne" resultType="reply">
+        SELECT * FROM tbl_reply
+        WHERE reply_no = #{replyNo}
+    </select>
 
 </mapper>

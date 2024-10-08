@@ -7,11 +7,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-@Controller
+//@Controller
+@RestController
 @RequestMapping("/rest")
 public class RestControllerTest {
     @GetMapping("/view")
-    @ResponseBody
+//    @ResponseBody
     public String viewPage() {
 
         return "hello";
@@ -28,7 +29,7 @@ public class RestControllerTest {
     비동기 통신에서 주로 많이 사용합니다.
      */
     @PostMapping("/object")
-    @ResponseBody
+//    @ResponseBody
     public Person object(@RequestBody Person p) {
         System.out.println("[dbg] /rest/object 요청: POST!!");
         System.out.println("[dbg] p = " + p);
@@ -42,7 +43,7 @@ public class RestControllerTest {
     }
 
     @PostMapping("/object2")
-    @ResponseBody
+//    @ResponseBody
     public ResponseEntity<?> object2(@RequestBody Map<String, Object> map) {
         System.out.println("[dbg] /rest/object 요청: POST!!");
         System.out.println("[dbg] map = " + map);

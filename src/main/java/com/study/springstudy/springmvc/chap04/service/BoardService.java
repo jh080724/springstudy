@@ -1,9 +1,9 @@
 package com.study.springstudy.springmvc.chap04.service;
 
-import com.study.springstudy.springmvc.chap04.dto.BoardDetailResponseDTO;
-import com.study.springstudy.springmvc.chap04.dto.BoardListReponseDTO;
-import com.study.springstudy.springmvc.chap04.dto.BoardWriteRequestDTO;
-import com.study.springstudy.springmvc.chap04.dto.PageDTO;
+import com.study.springstudy.springmvc.chap04.dto.response.BoardDetailResponseDTO;
+import com.study.springstudy.springmvc.chap04.dto.response.BoardListReponseDTO;
+import com.study.springstudy.springmvc.chap04.dto.request.BoardWriteRequestDTO;
+import com.study.springstudy.springmvc.chap04.dto.request.PageDTO;
 import com.study.springstudy.springmvc.chap04.entity.Board;
 import com.study.springstudy.springmvc.chap04.mapper.BoardMapper;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 

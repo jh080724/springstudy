@@ -10,7 +10,7 @@ CREATE TABLE tbl_board(
 );
  */
 
-import com.study.springstudy.springmvc.chap04.dto.BoardWriteRequestDTO;
+import com.study.springstudy.springmvc.chap04.dto.request.BoardWriteRequestDTO;
 import lombok.*;
 
 import java.time.LocalDateTime;

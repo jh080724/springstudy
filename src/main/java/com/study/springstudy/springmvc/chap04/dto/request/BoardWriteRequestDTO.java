@@ -1,6 +1,5 @@
-package com.study.springstudy.springmvc.chap04.dto;
+package com.study.springstudy.springmvc.chap04.dto.request;
 
-import com.study.springstudy.springmvc.chap04.entity.Board;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;

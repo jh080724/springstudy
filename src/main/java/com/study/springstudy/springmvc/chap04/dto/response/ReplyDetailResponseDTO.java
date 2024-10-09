@@ -2,9 +2,12 @@ package com.study.springstudy.springmvc.chap04.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.study.springstudy.springmvc.chap04.entity.Reply;
+import lombok.Getter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
+@Getter @ToString
 public class ReplyDetailResponseDTO {
 
     private int rno;

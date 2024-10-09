@@ -5,18 +5,18 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 /*
-    CREATE TABLE tbl_reply(
-        reply_no int auto_increment,
-        reply_text varchar(1000) not null,
-        reply_writer varchar(100) not null,
-        reply_date datetime default current_timestamp,
-        board_tbl_replyno int,
+    CREATE TABLE tbl_reply (
+	reply_no INT AUTO_INCREMENT,
+    reply_text VARCHAR(1000) NOT NULL,
+    reply_writer VARCHAR(100) NOT NULL,
+    reply_date DATETIME DEFAULT current_timestamp,
+    board_no INT,
 
-        constraint pk_reply primary key(reply_no),
-        constraint fk_reply foreign key(board_no)
-        REFERENCES tbl_board(board_no)
-        ON DELETE CASCADE
-    );
+    CONSTRAINT pk_reply PRIMARY KEY(reply_no),
+    CONSTRAINT fk_reply FOREIGN KEY(board_no)
+    REFERENCES tbl_board(board_no)
+    ON DELETE CASCADE
+);
  */
 
 @Getter

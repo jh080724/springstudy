@@ -32,6 +32,8 @@ public class ReplyService {
             dtoList.add(new ReplyDetailResponseDTO(reply));
         }
 
+        System.out.println("[dbg] getList() : dtoList.toString() = " + dtoList.toString());
+
         return dtoList;
     }
 }

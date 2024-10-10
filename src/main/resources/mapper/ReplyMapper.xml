@@ -15,7 +15,7 @@
     <select id="findAll" resultType="reply">
         SELECT * FROM tbl_reply
         WHERE board_no = #{boardNo}
-        ORDER BY reply_no
+        ORDER BY reply_no DESC
     </select>
 
     <select id="count" resultType="int">

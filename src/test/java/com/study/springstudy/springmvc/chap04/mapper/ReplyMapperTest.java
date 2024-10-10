@@ -1,6 +1,6 @@
 package com.study.springstudy.springmvc.chap04.mapper;
-
-import com.study.springstudy.springmvc.chap04.dto.ReplyDTO;
+//import com.study.springstudy.springmvc.chap04.dto.ReplyDTO;
+import com.study.springstudy.springmvc.chap04.dto.request.PageDTO;
 import com.study.springstudy.springmvc.chap04.entity.Board;
 import com.study.springstudy.springmvc.chap04.entity.Reply;
 import org.junit.jupiter.api.Assertions;
@@ -20,7 +20,6 @@ class ReplyMapperTest {
 
     @Autowired
     ReplyMapper replyMapper;
-
 
     @Test
     @DisplayName("게시물을 100개 등록하고, 랜덤으로 1000개의 댓글을 게시글에 등록한다.")
@@ -52,7 +51,7 @@ class ReplyMapperTest {
         int boardNo = 77;
 
         // when
-        List<Reply> replyList = replyMapper.findAll(77, pageNo);
+        List<Reply> replyList = replyMapper.findAll(boardNo, new PageDTO());
         replyList.forEach(System.out::println);
 
         // then
@@ -77,7 +76,7 @@ class ReplyMapperTest {
 
         // then
         Assertions.assertNull(reply);
-        Assertions.assertNotEquals(beforeDeleteCount, replyMapper.findAll(boardNo, pageNo).size());
+        Assertions.assertNotEquals(beforeDeleteCount, replyMapper.findAll(boardNo, new PageDTO()).size());
     }
 
     @Test
@@ -99,6 +98,5 @@ class ReplyMapperTest {
         Assertions.assertEquals(newReplyText, replyMapper.findOne(replyNo).getReplyText());
 
     }
-
 
 }

@@ -1,6 +1,7 @@
 package com.study.springstudy.springmvc.chap04.mapper;
 
 import com.study.springstudy.springmvc.chap04.dto.request.PageDTO;
+import com.study.springstudy.springmvc.chap04.dto.response.BoardDetailResponseDTO;
 import com.study.springstudy.springmvc.chap04.entity.Board;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -41,7 +42,7 @@ class BoardMapperTest {
         page.setAmount(10);
 
         // when
-        List<Board> boardList = mapper.findAll(page);
+        List<BoardDetailResponseDTO> boardList = mapper.findAll(page);
 
         // then
         boardList.forEach(System.out::println);

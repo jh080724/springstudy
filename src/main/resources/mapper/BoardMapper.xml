@@ -42,12 +42,24 @@
        데이터베이스의 컬럼명과 엔터티의 필드명이 동일해야 합니다. (스네이크케이스 -> 카멜케이스 변환은 따로 설정을 통해 처리)
        ex) board_no : boardNo (o)  board_num : bnum (x)
        -->
-   <select id="findAll" resultType="board">
-       SELECT * FROM tbl_board
-       <include refid="search" />
-       ORDER BY board_no DESC
-       LIMIT #{pageStart}, #{amount} <!-- get 생략 : getPageStart-> pageStart -->
-   </select>
+    <select id="findAll" resultType="com.study.springstudy.springmvc.chap04.dto.response.BoardDetailResponseDTO">
+        SELECT
+            B.board_no,
+            B.title,
+            B.content,
+            B.writer,
+            B.reg_date,
+            B.view_count,
+            COUNT(R.reply_no) AS reply_count
+        FROM tbl_board B
+        LEFT JOIN tbl_reply R
+        ON B.board_no = R.board_no
+        <include refid="search" />
+        GROUP BY B.board_no
+        ORDER BY board_no DESC
+        LIMIT #{pageStart}, #{amount}  <!-- get 생략 : getPageStart-> pageStart -->
+    </select>
+
 
    <select id="findOne" resultType="board">
        SELECT * FROM tbl_board

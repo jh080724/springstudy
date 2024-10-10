@@ -19,6 +19,7 @@
         <typeAlias type="com.study.springstudy.springmvc.chap03.entity.Score" alias="score" />
         <typeAlias type="com.study.springstudy.springmvc.chap04.entity.Board" alias="board" />
         <typeAlias type="com.study.springstudy.springmvc.chap04.entity.Reply" alias="reply" />
+        <typeAlias type="com.study.springstudy.springmvc.chap04.entity.Member" alias="member" />
 
     </typeAliases>
 
@@ -27,6 +28,7 @@
         <mapper resource="mapper/ScoreMapper.xml" />
         <mapper resource="mapper/BoardMapper.xml" />
         <mapper resource="mapper/ReplyMapper.xml" />
+        <mapper resource="mapper/MemberMapper.xml" />
     </mappers>
 
 </configuration>

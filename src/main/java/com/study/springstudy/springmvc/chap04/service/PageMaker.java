@@ -23,7 +23,7 @@ public class PageMaker {
     private static final int PAGE_COUNT = 10;
 
     // 계산에 필요한 값은 객체가 생성될 때 전달 받는다.
-    public PageMaker(int totalCount, PageDTO page) {
+    public PageMaker(int totalCount, PageDTO page) { // 선생소스는 순서 바껴잇음. pageDTO page, int totalCount
         this.totalCount = totalCount;
         this.page = page;
 

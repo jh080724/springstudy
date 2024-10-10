@@ -14,8 +14,9 @@
 
     <select id="findAll" resultType="reply">
         SELECT * FROM tbl_reply
-        WHERE board_no = #{boardNo}
-        ORDER BY reply_no DESC
+        WHERE board_no = #{bn}
+        ORDER BY reply_no
+        LIMIT #{p.pageStart}, #{p.amount}
     </select>
 
     <select id="count" resultType="int">

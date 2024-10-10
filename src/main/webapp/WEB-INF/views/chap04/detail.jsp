@@ -268,20 +268,22 @@ uri="http://java.sun.com/jsp/jstl/core" %>
     </div>
 
     <script>
-      const URL = "/api/v1/replies"; // 댓글과 관련된 요청 URL을 전역화.
+      const URL = "/api/v1/replies"; // 댓글과 관련된 요청 url을 전역화.
       const bno = "${b.boardNo}";
       const $addBtn = document.getElementById("replyAddBtn");
 
-      // 화면에 댓글 태그들을 랜더링하는 함수
-      function renderReplies(replies) {
+      // 화면에 댓글 태그들을 렌더링하는 함수
+      function renderReplies(replyData) {
+        // 객체 디스트럭쳐링 (댓글 수, 페이지메이커, 댓글목록으로 분해)
+        const { count, pageInfo, replies } = replyData;
+
         let tag = "";
 
         if (replies !== null && replies.length > 0) {
-          // 댓글이 존재하면...
-
           for (let reply of replies) {
-            // 객체 디스트럭쳐링(=구조->분해/변수에할당)
+            // 객체 디스트럭쳐링
             const { rno, writer, text, regDate } = reply;
+
             tag += `
                     <div id='replyContent' class='card-body' data-replyId='\${rno}'>
                         <div class='row user-block'>
@@ -306,29 +308,77 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                         `;
           }
         } else {
-          // 댓글이 없으면...
           tag +=
             "<div id='replyContent' class='card-body'>댓글이 아직 없습니다! ㅠㅠ</div>";
         }
-
-        // 댓글 수 랜더링
+        // 댓글 수 렌더링
         document.getElementById("replyCnt").textContent = replies.length;
 
-        //반복문을 애용해서 문자열로 작성한 tag를 댓글 영역 div에 innerHTML로 삽입.
+        // 반복문을 이용해서 문자열로 작성한 tag를 댓글 영역 div에 innerHTML로 삽입.
         document.getElementById("replyData").innerHTML = tag;
+
+        // 페이지 렌더링 함수 호출
+        renderPages(pageInfo);
+      }
+
+      // 화면에 페이지 버튼들을 렌더링하는 함수.
+      // 매개변수 선언부에 처음부터 디스트럭쳐링 해서 받고 있음.
+      function renderPages({ begin, end, prev, next, page, finalPage }) {
+        let tag = "";
+
+        // 이전 버튼 만들기
+        if (prev) {
+          tag += `<li class='page-item'><a class='page-link page-active' href='\${begin - 1}'>이전</a></li>`;
+        }
+
+        // 페이지 번호 버튼 만들기
+        for (let i = begin; i <= end; i++) {
+          let active = "";
+          if (page.pageNo === i) {
+            active = "p-active";
+          }
+
+          tag += `<li class='page-item \${active}'><a class='page-link page-custom' href='\${i}'>\${i}</a></li>`;
+        }
+
+        // 다음 버튼 만들기
+        if (next) {
+          tag += `<li class='page-item'><a class='page-link page-active' href='\${end + 1}'>다음</a></li>`;
+        }
+
+        // 페이지 태그 렌더링
+        document.querySelector(".pagination").innerHTML = tag;
       }
 
       // 서버에 비동기 방식으로 댓글 목록을 받아오는 함수
-      function fetchGetReplies() {
-        fetch(`\${URL}/\${bno}`)
+      function fetchGetReplies(pageNum = 1) {
+        // 댓글 목록 요청시 페이지번호 전달(전달 안되면 기본값 1)
+        // 자바스크립트 문자열 안에 달러와 중괄호를 쓰면 el로 인식.
+        // 달러기호 앞에 백슬래시 붙여주세요.
+        fetch(`\${URL}/\${bno}/page/\${pageNum}`)
           .then((res) => res.json())
           .then((replyList) => {
-            console.log("ReplyList: ");
             console.log(replyList);
-            renderReplies(replyList); // 댓글 랜더링(출력)
+            renderReplies(replyList);
           });
       }
 
+      // 페이지 클릭 이벤트 핸들러 등록 함수
+      function makePageButtonClickHandler() {
+        console.log("페이지 버튼이 클릭됨!");
+
+        const $pageUl = document.querySelector(".pagination");
+
+        $pageUl.addEventListener("click", (e) => {
+          if (!e.target.matches(".page-item a")) return;
+          e.preventDefault(); // a 기능 죽이기
+
+          // href에 작성된 각각의 페이지 번호를 가져와서 댓글 목록을 비동기 요청.
+          fetchGetReplies(e.target.getAttribute("href"));
+        });
+      }
+
+      // 댓글 등록
       $addBtn.onclick = (e) => {
         const $replyText = document.getElementById("newReplyText"); // 댓글 내용
         const $replyWriter = document.getElementById("newReplyWriter"); // 댓글 작성자
@@ -347,14 +397,14 @@ uri="http://java.sun.com/jsp/jstl/core" %>
           return;
         }
 
-        //서버로 데이터 보낼 준비
+        // 서버로 데이터 보낼 준비
         const payload = {
           text: textVal,
           author: writerVal,
           bno: bno,
         };
 
-        // 요청 방식 및 데이터를 전달할 정보 객체 만들자(POST)
+        // 요청 방식 및 데이터를 전달할 정보 객체 만들자 (POST)
         const requestInfo = {
           method: "POST",
           headers: {
@@ -365,29 +415,101 @@ uri="http://java.sun.com/jsp/jstl/core" %>
 
         // 서버에 POST 요청 보내기
         fetch(URL, requestInfo).then((res) => {
-          console.log(res);
-          console.log(res.status); //서버에서 전달한 응답상태 코드;
-          if (res.status === 200) {
-            alert("댓글이 정상 등록 되었습니다.");
+          console.log(res.status); // 서버에서 전달한 응답 상태 코드
 
-            // 비동기 요청이기 때문에 페이지가 이동하지 않는다.
-            // 담 댓글 입력을 위해 입력창을 비워주세요.
+          if (res.status === 200) {
+            alert("댓글이 정상 등록되었습니다.");
+            // json 데이터일 때는 json(), text일 때는 text();
+
+            // 비동기 요청이기 때문에 페이지가 이동하지 않습니다.
+            // 다음 댓글 입력을 위해 입력창을 비워주세요.
             $replyText.value = "";
             $replyWriter.value = "";
 
+            // 등록 완료 후 목록 요청하기.
             fetchGetReplies();
           } else {
-            alert("입력값에 문제가 있습니다. 입력값을 다시 확인해 보세요.");
+            alert("입력값에 문제가 있습니다. 입력값을 다시 확인해 보세요!");
             console.log(res.text());
           }
         });
       };
 
+      // 댓글 삭제 + 수정 모드 진입 이벤트 핸들러 등록 및 처리함수
+      function makeReplyRemoveClickHandler() {
+        // 댓글 목록 전체를 감싸고 있는 영역 취득
+        const $replyData = document.getElementById("replyData");
+        $replyData.addEventListener("click", (e) => {
+          e.preventDefault(); // a태그 죽이기
+
+          // 수정이든 삭제든 댓글 번호가 필요함.
+          // 그래서, 미리 얻어놓도록 함.
+          const rno = e.target.closest("#replyContent").dataset.replyid;
+
+          if (e.target.matches("#replyDelBtn")) {
+            //삭제로직 진행
+            if (!confirm("정말 삭제할까요 ?")) return;
+          } else if (e.target.matches("#replyModBtn")) {
+            // 수정 모드 진입(모달)
+            // 기존 작성한 댓글 내용을 가져오자.
+            const replyText =
+              e.target.parentNode.previousElementSibling.textContent;
+
+            // 읽어온 댓글 내용을 모달 바디에 때려 넣자.
+            document.getElementById("modReplyText").value = replyText;
+
+            // 댓글 번호도 모달안에 있는 input hidden에다가 집어넣자.
+            document.getElementById("modReplyId").value = rno;
+          } else return;
+        });
+      }
+
+      // 모달안에서 수정 버튼 클릭시 이벤트 처리 함수
+      function makeReplyModifyClickHandler() {
+        const $modBtn = document.getElementById("replyModBtn");
+        $modBtn.addEventListener("click", (e) => {
+          // 백앤드로 요청 보낼 준비
+          const payload = {
+            rno: document.getElementById("modReplyId").value,
+            text: document.getElementById("modReplyText").value,
+          };
+
+          const requestInfo = {
+            method: "PATCH",
+            headers: {
+              "content-type": "application/json",
+            },
+            body: JSON.stringify(payload),
+          };
+
+          fetch(URL, requestInfo).then((res) => {
+            if (res.status === 200) {
+              // modal 닫기
+              document.getElementById("modal-close").click();
+              fetchGetReplies(); // 수정완료 후 1페이지 댓글 목록 요청이 들어가게끔 처리
+            } else {
+              alert("수정값에 문제가 있습니다. 내용을 확인하세요!");
+              document.getElementById("modReplyText").value = "";
+              return;
+            }
+          });
+        });
+      }
+
       // 즉시 실행 함수를 이용해서 페이지가 로딩되면 함수가 자동 호출되게 하자.
       (() => {
-        //댓글을 서버에서 불러오기.
+        // 댓글을 서버에서 불러오기.
         fetchGetReplies();
-      })(); // 선언하자마자 바로 호출: 1회용 익명함수
+
+        // 페이지 번호 클릭 이벤트 등록
+        makePageButtonClickHandler();
+
+        // 댓글 삭제 & 수정 모드 이벤트 등록
+        makeReplyRemoveClickHandler();
+
+        // 댓글 수정요청 이벤트 핸들러
+        makeReplyModifyClickHandler();
+      })();
     </script>
   </body>
 </html>

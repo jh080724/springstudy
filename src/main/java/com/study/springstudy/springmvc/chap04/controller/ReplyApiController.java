@@ -1,15 +1,14 @@
 package com.study.springstudy.springmvc.chap04.controller;
 
+import com.study.springstudy.springmvc.chap04.dto.request.ReplyModifyRequestDTO;
 import com.study.springstudy.springmvc.chap04.dto.request.ReplyPostRequestDTO;
-import com.study.springstudy.springmvc.chap04.dto.response.ReplyDetailResponseDTO;
+import com.study.springstudy.springmvc.chap04.dto.response.ReplyListResponseDTO;
 import com.study.springstudy.springmvc.chap04.service.ReplyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController //메서드마다 @ResponseBody를 붙일 필요가 없다.
 @RequestMapping("/api/v1/replies")
@@ -36,12 +35,29 @@ public class ReplyApiController {
         return ResponseEntity.ok().body("Success");
     }
 
-    @GetMapping("/{boardNo}")
-    public ResponseEntity<?> list(@PathVariable int boardNo) {
+    // 댓글 목록 조회 요청
+    // URL: "/api/v1/replies/{boardNo}/page/페이지 번호"
+    @GetMapping("/{boardNo}/page/{pageNo}")
+    public ResponseEntity<?> list(@PathVariable int boardNo,
+                                  @PathVariable int pageNo) {
 
-        List<ReplyDetailResponseDTO> dtoList = replyService.getList(boardNo);
+        System.out.println("[dbg] 댓글목록 조회: boardNo: " + boardNo + ", pageNo: " + pageNo);
 
-        System.out.println("[dbg] ReplyApiController:list():dtoList = " + dtoList.toString());
-        return ResponseEntity.ok().body(dtoList);
+        ReplyListResponseDTO replies = replyService.getList(boardNo, pageNo);
+
+//        System.out.println("[dbg] 댓글목록조회, ReplyApiController:list():dtoList = " + dtoList.toString());
+
+        return ResponseEntity.ok().body(replies);
+    }
+
+    @PatchMapping
+    public ResponseEntity<?> update(@Validated @RequestBody ReplyModifyRequestDTO dto, BindingResult result) {
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body(result.toString());
+//                    getFieldError().getDefaultMessage());
+        }
+
+        replyService.modify(dto);
+        return ResponseEntity.ok().body("modSuccess");
     }
 }

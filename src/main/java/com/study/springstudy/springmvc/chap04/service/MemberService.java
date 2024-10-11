@@ -1,5 +1,6 @@
 package com.study.springstudy.springmvc.chap04.service;
 
+import com.study.springstudy.springmvc.chap04.dto.request.LoginRequestDTO;
 import com.study.springstudy.springmvc.chap04.dto.request.SignUpRequestDTO;
 import com.study.springstudy.springmvc.chap04.entity.Member;
 import com.study.springstudy.springmvc.chap04.mapper.MemberMapper;
@@ -20,17 +21,18 @@ public class MemberService {
         return memberMapper.save(dto.toEntity(encoder));
     }
 
-    public LoginResult authenticate(String account, String password){
+//    public LoginResult authenticate(String account, String password){
+    public LoginResult authenticate(LoginRequestDTO dto){
 
         // 회원가입 여부 확인
-        Member foundMember = memberMapper.findOne(account);
+        Member foundMember = memberMapper.findOne(dto.getAccount());
 
         if(foundMember == null){
             return NO_ACC;
         }
 
         // 비밀번호 일치 검사
-        if (encoder.matches(password, foundMember.getPassword())) {
+        if (encoder.matches(dto.getPassword(), foundMember.getPassword())) {
             return  SUCCESS;
         } else {
             return NO_PW;

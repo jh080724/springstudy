@@ -31,6 +31,7 @@ public class MemberController {
 
         System.out.println("[dbg] 가입자 존재여부 결과 flag = " + flag);
         return ResponseEntity.ok().body(flag);
+
     }
 
 

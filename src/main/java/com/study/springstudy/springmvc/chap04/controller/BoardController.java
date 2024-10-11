@@ -57,8 +57,14 @@ public class BoardController {
 //        List<BoardListReponseDTO> list = boardService.getList(page);// 서비스에 맡긴다. 서비스에 메소드 안만들어져 있는 상태라서 alt+enter로 BoardService에 메소드를 생성시킨다.
         System.out.println("[dbg] BoardController:list 진입!!!");
         Map<String, Object> map = boardService.getList(page);
+
+        System.out.println("[dbg] BoardController:list - 61!!!");
         model.addAttribute("bList", map.get("bList"));
+
+        System.out.println("[dbg] BoardController:list - 64!!!");
         model.addAttribute("maker", map.get("pm"));
+
+        System.out.println("[dbg] BoardController:list - 67!!!");
         return "chap04/list";
     }
 

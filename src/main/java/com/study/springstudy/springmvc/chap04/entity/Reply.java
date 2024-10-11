@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter // 보통 entity는 setter를 필요한 필드에만 직접 구현하는 편이다.
 @ToString
+@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

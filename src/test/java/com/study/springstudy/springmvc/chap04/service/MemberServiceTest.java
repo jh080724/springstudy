@@ -1,5 +1,6 @@
 package com.study.springstudy.springmvc.chap04.service;
 
+import com.study.springstudy.springmvc.chap04.dto.request.LoginRequestDTO;
 import com.study.springstudy.springmvc.chap04.dto.request.SignUpRequestDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -41,8 +42,11 @@ class MemberServiceTest {
         String password = "ppp1234";
 
         // when
-        LoginResult result = memberService.authenticate(account, password);
-
+//        LoginResult result = memberService.authenticate(account, password);
+        LoginResult result = memberService.authenticate(LoginRequestDTO
+                .builder()
+                .password(password)
+                .build());
         // then
         Assertions.assertEquals(LoginResult.NO_ACC, result);
 
@@ -56,7 +60,11 @@ class MemberServiceTest {
         String password = "ppp1234";
 
         // when
-        LoginResult result = memberService.authenticate(account, password);
+//        LoginResult result = memberService.authenticate(account, password);
+        LoginResult result = memberService.authenticate(LoginRequestDTO
+                .builder()
+                .password(password)
+                .build());
 
         // then
         Assertions.assertEquals(LoginResult.NO_PW, result);
@@ -71,8 +79,11 @@ class MemberServiceTest {
         String password = "1111";
 
         // when
-        LoginResult result = memberService.authenticate(account, password);
-
+//        LoginResult result = memberService.authenticate(account, password);
+        LoginResult result = memberService.authenticate(LoginRequestDTO
+                .builder()
+                .password(password)
+                .build());
         // then
         Assertions.assertEquals(LoginResult.SUCCESS, result);
 

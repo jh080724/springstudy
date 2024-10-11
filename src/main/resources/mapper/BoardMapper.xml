@@ -1,8 +1,5 @@
 <!-- 이 파일이 mybatis의 mapper로 사용된다는 일종의 선언 (외우지 마세요) -->
-<!DOCTYPE mapper
-        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.study.springstudy.springmvc.chap04.mapper.BoardMapper">
 
     <sql id="search">
@@ -20,6 +17,7 @@
             OR content LIKE CONCAT('%', #{keyword}, '%')
         </if>
     </sql>
+
     <insert id="save">
         INSERT INTO tbl_board
         (title, content, writer)
@@ -44,13 +42,13 @@
        -->
     <select id="findAll" resultType="com.study.springstudy.springmvc.chap04.dto.response.BoardDetailResponseDTO">
         SELECT
-        B.board_no,
-        B.title,
-        B.content,
-        B.writer,
-        B.reg_date,
-        B.view_count,
-        COUNT(R.reply_no) AS reply_count
+            B.board_no,
+            B.title,
+            B.content,
+            B.writer,
+            B.reg_date,
+            B.view_count,
+            COUNT(R.reply_no) AS reply_count
         FROM tbl_board B
         LEFT JOIN tbl_reply R
         ON B.board_no = R.board_no

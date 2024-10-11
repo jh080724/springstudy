@@ -25,9 +25,15 @@ public class BoardService {
 //    public List<BoardListReponseDTO> getList(PageDTO page) {
     public Map<String, Object> getList(PageDTO page) { // SearchDTO가 넘어옴.
 
+        System.out.println("[dbg] BoardService 진입!!!");
         // 전체 게시글을 가지고 오는 것이 아닌, 특정 페이지 부분만 가져와야 함.
         List<BoardDetailResponseDTO> boardList = mapper.findAll(page);
+
+        System.out.println("[dbg] BoardService: findAll 처리 이후!!!");
+
+
         PageMaker pageMaker = new PageMaker(mapper.getTotalCount(page), page);
+        System.out.println("[dbg] BoardService: pageMaker 처리 이후!!!");
 
 //        List<BoardListReponseDTO> dtoListst = new ArrayList<>(); // stream()으로 처리하여 주석처리.
 

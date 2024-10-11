@@ -5,8 +5,11 @@ import com.study.springstudy.springmvc.chap04.dto.request.SignUpRequestDTO;
 import com.study.springstudy.springmvc.chap04.service.LoginResult;
 import com.study.springstudy.springmvc.chap04.service.MemberService;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
@@ -16,6 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/members")
 @RequiredArgsConstructor
+@Slf4j
 public class MemberController {
 
     private final MemberService memberService;
@@ -23,7 +27,7 @@ public class MemberController {
     // 회원가입 양식 열기
     @GetMapping("/sign-up")
     public void signUp() {
-
+        log.info("/members/sign-up: GET");
     }
 
     // 아이디, 이메일 중복검사 비동기 요청 처리
@@ -31,6 +35,9 @@ public class MemberController {
     @ResponseBody   // Get 방식의 Fetch 요청을 받았으면 JSON 파싱을 위해서 @ResponseBody 붙여야 함
     public ResponseEntity<?> check(@RequestParam String type,
                                    @RequestParam String keyword) {
+        log.info("/members/check: async GET!");
+        log.debug("type: {}, keyword: {}", type, keyword);
+
         boolean flag = memberService.checkIdentifier(type, keyword);
 
         System.out.println("[dbg] 가입자 존재여부 결과 flag = " + flag);
@@ -40,6 +47,8 @@ public class MemberController {
 
     @PostMapping("/sign-up")
     public String signUp(@Validated SignUpRequestDTO dto) {
+        log.info("/members/sign-up: POST!");
+        log.info("param: {}", dto);
         System.out.println("[dbg] Controller:signUp() dto = " + dto.toString());
         boolean flag = memberService.join(dto);
 
@@ -49,7 +58,7 @@ public class MemberController {
 
     // 로그인 화면 요청
     @GetMapping("sign-in")
-    public void signIn(){
+    public void signIn() {
 
     }
 
@@ -60,16 +69,21 @@ public class MemberController {
                          // 리다이렉트는 응답이 나갔다가 재요청이 들어오는데, 그 과정에서
                          // 응답이 나가는 순간 모델이 소멸함. 그래서, RedirectAttributes를 사용함.
                          RedirectAttributes ra,
-                         HttpServletResponse response){
+                         HttpServletResponse response,
+                         HttpServletRequest request) {
 
         LoginResult result = memberService.authenticate(dto);
 
         // redirect에서 데이터를 일회성으로 사용하는 메서드
         ra.addFlashAttribute("result", result);
 
-        if(result == LoginResult.SUCCESS){ //로그인 성공
+        if (result == LoginResult.SUCCESS) { //로그인 성공
             // 로그인을 헸다는 정보를 계속 유지하기 위한 수단으로 쿠키를 사용하자.
-            makeLoginCook(dto, response);
+//            makeLoginCook(dto, response);
+
+            //세션으로 로그인.
+            //서비스에게 세션 객체와 아이디를 전달.
+            memberService.maintainLoginState(request.getSession(), dto.getAccount());
 
             return "redirect:/board/list";
         }
@@ -77,7 +91,19 @@ public class MemberController {
         return "redirect:/members/sign-in"; // 로그인 실패 시
     }
 
-    private void makeLoginCook(LoginRequestDTO dto, HttpServletResponse response) {
+    //로그아웃 요청 처리
+    @GetMapping("/sign-out")
+    public String signOut(HttpSession session){
+        //세션에서 로그인 정보 기록 삭제
+        session.removeAttribute("login");
+
+        //세션 전체 무효화(초기화)
+        session.invalidate();
+
+        return "redirect:/";
+    }
+
+    private void makeLoginCookie(LoginRequestDTO dto, HttpServletResponse response) {
         // 쿠키에 로그인 기록을 저장
         // 쿠키 객체를 생성 -> 생성자의 매개값으로 쿠키의 이름과 저장할 값을 전달(문자열만 가능 4kb)
         Cookie cookie = new Cookie("login", dto.getAccount());
@@ -90,6 +116,7 @@ public class MemberController {
         response.addCookie(cookie);
 
     }
+
 
 }
 

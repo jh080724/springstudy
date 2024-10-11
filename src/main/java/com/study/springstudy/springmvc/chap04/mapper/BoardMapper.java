@@ -25,6 +25,7 @@ public interface BoardMapper {
 
     // 조회수 처리
     void updateViewCount(int boardNo);
+//    void updateViewCount(int bno);
 
     // 검색 게시물 개수 카운트
     int getTotalCount(PageDTO page);

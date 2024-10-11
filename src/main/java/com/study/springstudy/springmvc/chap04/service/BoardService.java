@@ -1,7 +1,7 @@
 package com.study.springstudy.springmvc.chap04.service;
 
 import com.study.springstudy.springmvc.chap04.dto.response.BoardDetailResponseDTO;
-import com.study.springstudy.springmvc.chap04.dto.response.BoardListReponseDTO;
+import com.study.springstudy.springmvc.chap04.dto.response.BoardListResponseDTO;
 import com.study.springstudy.springmvc.chap04.dto.request.BoardWriteRequestDTO;
 import com.study.springstudy.springmvc.chap04.dto.request.PageDTO;
 import com.study.springstudy.springmvc.chap04.entity.Board;
@@ -40,8 +40,8 @@ public class BoardService {
 //                .map(BoardListReponseDTO::new)
 //                .collect(Collectors.toList());
 
-        List<BoardListReponseDTO> dtoList = boardList.stream()
-                .map(BoardListReponseDTO::new)
+        List<BoardListResponseDTO> dtoList = boardList.stream()
+                .map(BoardListResponseDTO::new)
                 .collect(Collectors.toList());
 
         Map<String, Object> result = new HashMap<>();
@@ -56,11 +56,14 @@ public class BoardService {
     }
 
     public BoardDetailResponseDTO getDetail(int bno) {
+        // 상세보기니까 조회수를 하나 올려주는 처리를 하자.
+        // 상세 조회 전에 실행하자.
         mapper.updateViewCount(bno);
         Board board = mapper.findOne(bno);
         return new BoardDetailResponseDTO(board);
     }
 
+    // 삭제 서비스 로직
     public void delete(int boardNo) {
         mapper.delete(boardNo);
     }

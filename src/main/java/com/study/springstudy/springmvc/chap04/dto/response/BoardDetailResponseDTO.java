@@ -26,7 +26,7 @@ public class BoardDetailResponseDTO {
         this.title = board.getTitle();
         this.content = board.getContent();
 //        this.regDate = board.getRegDate();
-        this.regDate = BoardListReponseDTO.makePrettierDateString(board.getRegDate());
+        this.regDate = BoardListResponseDTO.makePrettierDateString(board.getRegDate());
         this.writer = board.getWriter();
         this.viewCount = board.getViewCount();
     }

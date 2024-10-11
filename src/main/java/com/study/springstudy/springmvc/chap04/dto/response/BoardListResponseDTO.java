@@ -1,7 +1,5 @@
 package com.study.springstudy.springmvc.chap04.dto.response;
 
-import com.study.springstudy.springmvc.chap04.entity.Board;
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -12,7 +10,7 @@ import java.time.format.DateTimeFormatter;
 @Getter
 @ToString
 @EqualsAndHashCode
-public class BoardListReponseDTO {  // BoardList의 응답용 DTO
+public class BoardListResponseDTO {  // BoardList의 응답용 DTO
     private final int boardNo;
     private final String shortTitle;    // 5자 넘어가면 잘라내기
     private final String shortContent;  // 30자 넘어가면 잘라내기
@@ -22,7 +20,7 @@ public class BoardListReponseDTO {  // BoardList의 응답용 DTO
     private final int replyCount;
 
     // 생성자
-    public BoardListReponseDTO(BoardDetailResponseDTO board) {
+    public BoardListResponseDTO(BoardDetailResponseDTO board) {
         this.boardNo = board.getBoardNo();
         this.shortTitle = makeShortTitle(board.getTitle());
         this.shortContent = makeShortContent(board.getContent());

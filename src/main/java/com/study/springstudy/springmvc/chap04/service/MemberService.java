@@ -20,7 +20,6 @@ public class MemberService {
         return memberMapper.save(dto.toEntity(encoder));
     }
 
-
     public LoginResult authenticate(String account, String password){
 
         // 회원가입 여부 확인

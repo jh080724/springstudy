@@ -1,13 +1,12 @@
 package com.study.springstudy.springmvc.chap04.controller;
 
+import com.study.springstudy.springmvc.chap04.dto.request.SignUpRequestDTO;
 import com.study.springstudy.springmvc.chap04.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/members")
@@ -34,6 +33,14 @@ public class MemberController {
 
     }
 
+    @PostMapping("/sign-up")
+    public String signUp(@Validated SignUpRequestDTO dto){
+        System.out.println("[dbg] Controller:signUp() dto = " + dto.toString());
+        boolean flag = memberService.join(dto);
+
+        return flag ? "redirect:/members/sign-in" : "redirect:/members/sign-up";
+
+    }
 
 }
 

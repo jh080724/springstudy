@@ -70,6 +70,7 @@ public class BoardController {
 
     @GetMapping("/write")
     public String write() {
+        System.out.println("[dbg] BoardController -> GetMapping:write()");
         return "chap04/write";
     }
 

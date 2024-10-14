@@ -1,4 +1,4 @@
-package com.study.springstudy.springmvc.chap04.controller;
+package com.study.springstudy.springmvc.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

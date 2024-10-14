@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.WebUtils;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 import static com.study.springstudy.springmvc.chap04.service.LoginResult.*;
 
@@ -28,8 +27,8 @@ public class MemberService {
     private final PasswordEncoder encoder;
 
     // 회원 가입 처리 서비스
-    public boolean join(SignUpRequestDTO dto) {
-        return memberMapper.save(dto.toEntity(encoder));
+    public boolean join(SignUpRequestDTO dto, String savePath) {
+        return memberMapper.save(dto.toEntity(encoder, savePath));
     }
 
     //    public LoginResult authenticate(String account, String password){

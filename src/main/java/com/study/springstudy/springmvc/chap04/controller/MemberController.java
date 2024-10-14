@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.WebUtils;
 
 @Controller
 @RequestMapping("/members")
@@ -72,7 +73,8 @@ public class MemberController {
                          HttpServletResponse response,
                          HttpServletRequest request) {
 
-        LoginResult result = memberService.authenticate(dto);
+        // 자동 로그인 서비스를 추가하기 위해 세션과 응답객체도 함께 전달
+        LoginResult result = memberService.authenticate(dto, request.getSession(), response);
 
         // redirect에서 데이터를 일회성으로 사용하는 메서드
         ra.addFlashAttribute("result", result);
@@ -81,6 +83,7 @@ public class MemberController {
             // 로그인을 헸다는 정보를 계속 유지하기 위한 수단으로 쿠키를 사용하자.
 //            makeLoginCook(dto, response);
 
+            System.out.println("[dbg] 로그인 성공..." + dto.toString());
             //세션으로 로그인.
             //서비스에게 세션 객체와 아이디를 전달.
             memberService.maintainLoginState(request.getSession(), dto.getAccount());
@@ -93,7 +96,17 @@ public class MemberController {
 
     //로그아웃 요청 처리
     @GetMapping("/sign-out")
-    public String signOut(HttpSession session){
+    public String signOut(HttpSession session,
+                          HttpServletRequest request,
+                          HttpServletResponse response){
+
+        // 자동 로그인 중인지 확인
+        if(WebUtils.getCookie(request, "auto") != null){
+            // 쿠키를 없애주고, db 데이터도 원래대로 돌려놔야 함.
+            memberService.autoLoginClear(request, response);
+        }
+
+
         //세션에서 로그인 정보 기록 삭제
         session.removeAttribute("login");
 

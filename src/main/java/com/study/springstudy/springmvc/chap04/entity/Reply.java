@@ -18,9 +18,21 @@ import java.time.LocalDateTime;
     ON DELETE CASCADE
 );
  */
+/*
+    테이블 구조변경(account 필드 추가)
+    ALTER TABLE tbl_reply
+    ADD account VARCHAR(50);
+
+    제약 조건 추가
+    ALTER TABLE tbl_reply
+    ADD CONSTRAINT fk_reply_account
+    FOREIGN KEY (account)
+    REFERENCES tbl_member (account)
+    ON DELETE CASCADE;
+ */
 
 @Getter
-@Setter // 보통 entity는 setter를 필요한 필드에만 직접 구현하는 편이다.
+//@Setter // 보통 entity는 setter를 필요한 필드에만 직접 구현하는 편이다.
 @ToString
 @EqualsAndHashCode
 @NoArgsConstructor
@@ -28,8 +40,17 @@ import java.time.LocalDateTime;
 @Builder
 public class Reply {
     private int replyNo;
+
+    @Setter
     private String replyText;
+
+    @Setter
     private String replyWriter;
+
     private LocalDateTime replyDate;
     private int boardNo;
+
+    @Setter
+    private String account;
+
 }

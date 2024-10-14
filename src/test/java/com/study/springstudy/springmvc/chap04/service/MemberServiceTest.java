@@ -8,8 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 class MemberServiceTest {
 
@@ -46,7 +44,7 @@ class MemberServiceTest {
         LoginResult result = memberService.authenticate(LoginRequestDTO
                 .builder()
                 .password(password)
-                .build());
+                .build(), request.getSession(), response);
         // then
         Assertions.assertEquals(LoginResult.NO_ACC, result);
 
@@ -64,7 +62,7 @@ class MemberServiceTest {
         LoginResult result = memberService.authenticate(LoginRequestDTO
                 .builder()
                 .password(password)
-                .build());
+                .build(), request.getSession(), response);
 
         // then
         Assertions.assertEquals(LoginResult.NO_PW, result);
@@ -83,7 +81,7 @@ class MemberServiceTest {
         LoginResult result = memberService.authenticate(LoginRequestDTO
                 .builder()
                 .password(password)
-                .build());
+                .build(), request.getSession(), response);
         // then
         Assertions.assertEquals(LoginResult.SUCCESS, result);
 

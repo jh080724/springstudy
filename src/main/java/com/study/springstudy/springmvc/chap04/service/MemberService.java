@@ -1,14 +1,23 @@
 package com.study.springstudy.springmvc.chap04.service;
 
+import com.study.springstudy.springmvc.chap04.dto.request.AutoLoginDTO;
 import com.study.springstudy.springmvc.chap04.dto.request.LoginRequestDTO;
 import com.study.springstudy.springmvc.chap04.dto.request.SignUpRequestDTO;
 import com.study.springstudy.springmvc.chap04.dto.response.LoginUserResponseDTO;
 import com.study.springstudy.springmvc.chap04.entity.Member;
 import com.study.springstudy.springmvc.chap04.mapper.MemberMapper;
+import com.study.springstudy.springmvc.util.LoginUtils;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.WebUtils;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static com.study.springstudy.springmvc.chap04.service.LoginResult.*;
 
@@ -19,26 +28,56 @@ public class MemberService {
     private final PasswordEncoder encoder;
 
     // 회원 가입 처리 서비스
-    public boolean join(SignUpRequestDTO dto){
+    public boolean join(SignUpRequestDTO dto) {
         return memberMapper.save(dto.toEntity(encoder));
     }
 
-//    public LoginResult authenticate(String account, String password){
-    public LoginResult authenticate(LoginRequestDTO dto){
+    //    public LoginResult authenticate(String account, String password){
+    public LoginResult authenticate(LoginRequestDTO dto,
+                                    HttpSession session,
+                                    HttpServletResponse response) {
 
         // 회원가입 여부 확인
         Member foundMember = memberMapper.findOne(dto.getAccount());
 
-        if(foundMember == null){
+        if (foundMember == null) {
             return NO_ACC;
         }
 
         // 비밀번호 일치 검사
-        if (encoder.matches(dto.getPassword(), foundMember.getPassword())) {
-            return  SUCCESS;
-        } else {
+        if (!encoder.matches(dto.getPassword(), foundMember.getPassword())) {
             return NO_PW;
         }
+
+        // 자동 로그인 처리
+        if (dto.getAutoLogin() == null) {
+            System.out.println("[dbg]MemberService: authenticate: dto.getAutoLogin() return null !!!");
+        }
+
+        if (dto.getAutoLogin()) {
+            // 1. 자동로그인 쿠키 생성 -> 쿠키안에는 중복되지 않는 값을 저장
+            // UUID, 브라우서 세션 아이디를 이용.
+            Cookie autoCookie = new Cookie("auto", session.getId());
+
+            //2. 쿠키설정 -사용경로, 수명...
+            int limitTime = 60 * 60 * 24 * 7; // 자동로그인 유지시간
+            autoCookie.setPath("/");
+            autoCookie.setMaxAge(limitTime);
+
+            //3 쿠키를 클라이언트에게 전송하기 위해 응답객체에 태우기
+            response.addCookie(autoCookie);
+
+            //4. DB에도 쿠키에 관련된 값들 (랜덤한 세션 아이디, 자동로그인 만료 시간)을 갱신
+            AutoLoginDTO autoDto = AutoLoginDTO.builder()
+                    .sessionId(session.getId())
+                    .limitTime(LocalDateTime.now().plusSeconds(limitTime))
+                    .account(dto.getAccount())
+                    .build();
+            memberMapper.saveAutoLogin(autoDto);
+        }
+
+        return SUCCESS;
+
     }
 
 
@@ -68,5 +107,29 @@ public class MemberService {
 
         // 세션 수명 설정
         session.setMaxInactiveInterval(60 * 60);    // 1시간(3600초)
+    }
+
+    public void autoLoginClear(HttpServletRequest request, HttpServletResponse response) {
+        Cookie c = WebUtils.getCookie(request, "auto");
+
+        //쿠키 삭제
+        // -> 쿠키의 수명을 0으로 설정하여 다시 클라이언트로 전송 -> 자동 소멸
+        if(c!=null) {
+            c.setMaxAge(0);
+            c.setPath("/");
+            response.addCookie(c);
+        }
+
+        //데이터베이스에도 세션아이디와 만료시간을 정리.
+        memberMapper.saveAutoLogin(
+                AutoLoginDTO.builder()
+                        .sessionId("none")  // 기존 세션 아이디 지우기
+                        .limitTime(LocalDateTime.now())
+                        .account(LoginUtils.getCurrentLoginMemberAccount(request.getSession()))
+                        .build()
+        );
+
+
+
     }
 }

@@ -45,6 +45,9 @@
                 <div><a href="/board/list?pageNo=1&amount=30&type=${s.type}&keyword=${s.keyword}">30</a></div>
             </div>
         </div>
+
+
+
         <!-- 메인 게시판 영역 -->
         <div class="card-container">
             <c:forEach var="b" items="${bList}">
@@ -229,25 +232,20 @@
         });
       }
 
-      // 검색 조건 셀렉트 박스 옵션 타입 고정하기 search-type
-      function fixSearchOption(){
+      // 검색조건 셀렉트 박스 옵션 타입 고정하기
+      function fixSearchOption() {
         const $select = document.getElementById('search-type');
+
         const $options = [...$select.children];
-
-        // call back 함수
         $options.forEach($opt => {
-
-            if($opt.value === '${s.type}') {
+            if ($opt.value === '${s.type}') {
                 // option 태그에 selected를 주면 그 option으로 고정됨.
                 $opt.setAttribute('selected', 'selected');
             }
         });
-
       }
 
-
       appendPageActive();
-
       fixSearchOption();
 
     </script>
@@ -255,3 +253,14 @@
 
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+

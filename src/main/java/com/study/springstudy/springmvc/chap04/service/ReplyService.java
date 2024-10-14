@@ -7,6 +7,8 @@ import com.study.springstudy.springmvc.chap04.dto.response.ReplyDetailResponseDT
 import com.study.springstudy.springmvc.chap04.dto.response.ReplyListResponseDTO;
 import com.study.springstudy.springmvc.chap04.entity.Reply;
 import com.study.springstudy.springmvc.chap04.mapper.ReplyMapper;
+import com.study.springstudy.springmvc.util.LoginUtils;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +21,13 @@ public class ReplyService {
 
     private final ReplyMapper mapper;
 
-    public void register(ReplyPostRequestDTO dto) {
-        mapper.save(dto.toEntity());
+    public void register(ReplyPostRequestDTO dto, HttpSession session) {
+        Reply reply = dto.toEntity();
+
+        // 세션 데이터에서 현재 로그인 중인 사용자의 아이디를 따로 세팅
+        reply.setAccount(LoginUtils.getCurrentLoginMemberAccount(session));
+        mapper.save(reply);
+
     }
 
     public ReplyListResponseDTO getList(int boardNo, int pageNo) {

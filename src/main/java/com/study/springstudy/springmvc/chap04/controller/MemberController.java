@@ -5,6 +5,8 @@ import com.study.springstudy.springmvc.chap04.dto.request.SignUpRequestDTO;
 import com.study.springstudy.springmvc.chap04.service.LoginResult;
 import com.study.springstudy.springmvc.chap04.service.MemberService;
 import com.study.springstudy.springmvc.util.FileUtils;
+import com.study.springstudy.springmvc.util.MailSenderService;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -30,6 +32,7 @@ public class MemberController {
     private String rootPath;
 
     private final MemberService memberService;
+    private final MailSenderService mailSenderService;
 
     // 회원가입 양식 열기
     @GetMapping("/sign-up")
@@ -127,7 +130,29 @@ public class MemberController {
         return "redirect:/";
     }
 
+    // 연습용 이메일 폼 화면
+    @GetMapping("/email")
+    public String emailForm(){
+        return "email/email-form";
+    }
+
+    @PostMapping("/email")
+    @ResponseBody
+    public ResponseEntity<?> mailCheck(@RequestBody String email){
+        log.info("[dbg] 이메일 인증 요청 들어옴: {}", email);
+
+        try {
+            String authNum = mailSenderService.joinMail(email);
+            return ResponseEntity.ok().body(authNum);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+
     private void makeLoginCookie(LoginRequestDTO dto, HttpServletResponse response) {
+
         // 쿠키에 로그인 기록을 저장
         // 쿠키 객체를 생성 -> 생성자의 매개값으로 쿠키의 이름과 저장할 값을 전달(문자열만 가능 4kb)
         Cookie cookie = new Cookie("login", dto.getAccount());

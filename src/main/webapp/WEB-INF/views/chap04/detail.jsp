@@ -186,7 +186,12 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                   <div class="col-md-3">
                     <div class="form-group">
                       <div class="profile-box">
-                        <img src="/assets/img/anonymous.jpg" alt="프사" />
+                        <c:if test="${login.profile} == null">
+                          <img src="/assets/img/anonymous.jpg" alt="프사" />
+                        </c:if>
+                        <c:if test="${login.profile} != null">
+                          <img src="/display/${login.profile}" alt="프사" />
+                        </c:if>
                       </div>
                       <label for="newReplyWriter" hidden>댓글 작성자</label>
                       <input
@@ -287,25 +292,25 @@ uri="http://java.sun.com/jsp/jstl/core" %>
     </div>
 
     <script>
-      const URL = '/api/v1/replies'; // 댓글과 관련된 요청 url을 전역화.
-      const bno = '${b.boardNo}';
+      const URL = "/api/v1/replies"; // 댓글과 관련된 요청 url을 전역화.
+      const bno = "${b.boardNo}";
 
-      const currentAccount = '${login.account}'; // 로그인중인 사람 계정
-      const auth = '${login.auth}'; // 로그인 한 사람 권한
+      const currentAccount = "${login.account}"; // 로그인중인 사람 계정
+      const auth = "${login.auth}"; // 로그인 한 사람 권한
 
-      const $addBtn = document.getElementById('replyAddBtn');
+      const $addBtn = document.getElementById("replyAddBtn");
 
-      console.log('[dbg]');
+      console.log("[dbg]");
       console.log(auth);
       console.log(currentAccount);
-      console.log('------------');
+      console.log("------------");
 
       // 화면에 댓글 태그들을 렌더링하는 함수
       function renderReplies(replyData) {
         // 객체 디스트럭쳐링 (댓글 수, 페이지메이커, 댓글목록으로 분해)
         const { count, pageInfo, replies } = replyData;
 
-        let tag = '';
+        let tag = "";
 
         if (replies !== null && replies.length > 0) {
           for (let reply of replies) {
@@ -326,7 +331,7 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                             <div class='col-md-9'>\${text}</div>
                             <div class='col-md-3 text-right'>
                         `;
-            if (auth === '관리자회원' || currentAccount === account) {
+            if (auth === "관리자회원" || currentAccount === account) {
               tag += `
                   <a id='replyModBtn' class='btn btn-sm btn-outline-dark' data-bs-toggle='modal' data-bs-target='#replyModifyModal'>수정</a>&nbsp;
                   <a id='replyDelBtn' class='btn btn-sm btn-outline-dark' href='#'>삭제</a>
@@ -343,10 +348,10 @@ uri="http://java.sun.com/jsp/jstl/core" %>
             "<div id='replyContent' class='card-body'>댓글이 아직 없습니다! ㅠㅠ</div>";
         }
         // 댓글 수 렌더링
-        document.getElementById('replyCnt').textContent = replies.length;
+        document.getElementById("replyCnt").textContent = replies.length;
 
         // 반복문을 이용해서 문자열로 작성한 tag를 댓글 영역 div에 innerHTML로 삽입.
-        document.getElementById('replyData').innerHTML = tag;
+        document.getElementById("replyData").innerHTML = tag;
 
         // 페이지 렌더링 함수 호출
         renderPages(pageInfo);
@@ -355,7 +360,7 @@ uri="http://java.sun.com/jsp/jstl/core" %>
       // 화면에 페이지 버튼들을 렌더링하는 함수.
       // 매개변수 선언부에 처음부터 디스트럭쳐링 해서 받고 있음.
       function renderPages({ begin, end, prev, next, page, finalPage }) {
-        let tag = '';
+        let tag = "";
 
         // 이전 버튼 만들기
         if (prev) {
@@ -364,9 +369,9 @@ uri="http://java.sun.com/jsp/jstl/core" %>
 
         // 페이지 번호 버튼 만들기
         for (let i = begin; i <= end; i++) {
-          let active = '';
+          let active = "";
           if (page.pageNo === i) {
-            active = 'p-active';
+            active = "p-active";
           }
 
           tag += `<li class='page-item \${active}'><a class='page-link page-custom' href='\${i}'>\${i}</a></li>`;
@@ -378,7 +383,7 @@ uri="http://java.sun.com/jsp/jstl/core" %>
         }
 
         // 페이지 태그 렌더링
-        document.querySelector('.pagination').innerHTML = tag;
+        document.querySelector(".pagination").innerHTML = tag;
       }
 
       // 서버에 비동기 방식으로 댓글 목록을 받아오는 함수
@@ -396,35 +401,35 @@ uri="http://java.sun.com/jsp/jstl/core" %>
 
       // 페이지 클릭 이벤트 핸들러 등록 함수
       function makePageButtonClickHandler() {
-        console.log('페이지 버튼이 클릭됨!');
+        console.log("페이지 버튼이 클릭됨!");
 
-        const $pageUl = document.querySelector('.pagination');
+        const $pageUl = document.querySelector(".pagination");
 
-        $pageUl.addEventListener('click', (e) => {
-          if (!e.target.matches('.page-item a')) return;
+        $pageUl.addEventListener("click", (e) => {
+          if (!e.target.matches(".page-item a")) return;
           e.preventDefault(); // a 기능 죽이기
 
           // href에 작성된 각각의 페이지 번호를 가져와서 댓글 목록을 비동기 요청.
-          fetchGetReplies(e.target.getAttribute('href'));
+          fetchGetReplies(e.target.getAttribute("href"));
         });
       }
 
       // 댓글 등록
       $addBtn.onclick = (e) => {
-        const $replyText = document.getElementById('newReplyText'); // 댓글 내용
-        const $replyWriter = document.getElementById('newReplyWriter'); // 댓글 작성자
+        const $replyText = document.getElementById("newReplyText"); // 댓글 내용
+        const $replyWriter = document.getElementById("newReplyWriter"); // 댓글 작성자
         // 공백이 제거된 값을 얻음.
         const textVal = $replyText.value.trim();
         const writerVal = $replyWriter.value.trim();
         // 사용자 입력값 검증
-        if (textVal === '') {
-          alert('댓글 내용은 필수값입니다!!');
+        if (textVal === "") {
+          alert("댓글 내용은 필수값입니다!!");
           return;
-        } else if (writerVal === '') {
-          alert('댓글 작성자는 필수값입니다!!');
+        } else if (writerVal === "") {
+          alert("댓글 작성자는 필수값입니다!!");
           return;
         } else if (writerVal.length < 2 || writerVal.length > 8) {
-          alert('댓글 작성자는 2글자에서 8글자 사이로 작성하세요!');
+          alert("댓글 작성자는 2글자에서 8글자 사이로 작성하세요!");
           return;
         }
 
@@ -437,9 +442,9 @@ uri="http://java.sun.com/jsp/jstl/core" %>
 
         // 요청 방식 및 데이터를 전달할 정보 객체 만들자 (POST)
         const requestInfo = {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'content-type': 'application/json',
+            "content-type": "application/json",
           },
           body: JSON.stringify(payload),
         };
@@ -449,18 +454,18 @@ uri="http://java.sun.com/jsp/jstl/core" %>
           console.log(res.status); // 서버에서 전달한 응답 상태 코드
 
           if (res.status === 200) {
-            alert('댓글이 정상 등록되었습니다.');
+            alert("댓글이 정상 등록되었습니다.");
             // json 데이터일 때는 json(), text일 때는 text();
 
             // 비동기 요청이기 때문에 페이지가 이동하지 않습니다.
             // 다음 댓글 입력을 위해 입력창을 비워주세요.
-            $replyText.value = '';
-            $replyWriter.value = '';
+            $replyText.value = "";
+            $replyWriter.value = "";
 
             // 등록 완료 후 목록 요청하기.
             fetchGetReplies();
           } else {
-            alert('입력값에 문제가 있습니다. 입력값을 다시 확인해 보세요!');
+            alert("입력값에 문제가 있습니다. 입력값을 다시 확인해 보세요!");
             console.log(res.text());
           }
         });
@@ -469,18 +474,18 @@ uri="http://java.sun.com/jsp/jstl/core" %>
       // 댓글 삭제 + 수정 모드 진입 이벤트 핸들러 등록 및 처리함수
       function makeReplyRemoveClickHandler() {
         // 댓글 목록 전체를 감싸고 있는 영역 취득
-        const $replyData = document.getElementById('replyData');
+        const $replyData = document.getElementById("replyData");
 
-        $replyData.addEventListener('click', (e) => {
+        $replyData.addEventListener("click", (e) => {
           e.preventDefault(); // a태그 죽이기
 
           // 수정이든 삭제든 댓글 번호가 필요합니다.
           // 그래서 미리 얻어놓도록 하겠습니다.
-          const rno = e.target.closest('#replyContent').dataset.replyid;
+          const rno = e.target.closest("#replyContent").dataset.replyid;
 
-          if (e.target.matches('#replyDelBtn')) {
+          if (e.target.matches("#replyDelBtn")) {
             // 삭제 로직 진행
-            if (!confirm('정말 삭제할까요?')) return;
+            if (!confirm("정말 삭제할까요?")) return;
 
             /*
             URL: /api/v1/replies/rno: DELETE, 전달되는 JSON은 없습니다.
@@ -489,44 +494,44 @@ uri="http://java.sun.com/jsp/jstl/core" %>
             */
 
             fetch(`\${URL}/\${rno}`, {
-              method: 'DELETE',
+              method: "DELETE",
             }).then((res) => {
               if (res.status === 200) {
-                alert('댓글이 삭제되었습니다.');
+                alert("댓글이 삭제되었습니다.");
                 fetchGetReplies();
               } else {
-                alert('오류가 발생했습니다. 관리자에게 문의하세요!');
+                alert("오류가 발생했습니다. 관리자에게 문의하세요!");
               }
             });
-          } else if (e.target.matches('#replyModBtn')) {
+          } else if (e.target.matches("#replyModBtn")) {
             // 수정 모드 진입 (모달)
             // 기존에 작성한 댓글 내용을 가져오자.
             const replyText =
               e.target.parentNode.previousElementSibling.textContent;
 
             // 읽어온 댓글 내용을 모달 바디에 때려 넣자.
-            document.getElementById('modReplyText').value = replyText;
+            document.getElementById("modReplyText").value = replyText;
 
             // 댓글 번호도 모달 안에 있는 input hidden에다가 집어 넣어야 함.
-            document.getElementById('modReplyId').value = rno;
+            document.getElementById("modReplyId").value = rno;
           } else return;
         });
       }
 
       // 모달 안에서 수정 버튼 클릭시 이벤트 처리 함수
       function makeReplyModifyClickHandler() {
-        const $modBtn = document.getElementById('replyModBtn');
+        const $modBtn = document.getElementById("replyModBtn");
 
-        $modBtn.addEventListener('click', (e) => {
+        $modBtn.addEventListener("click", (e) => {
           const payload = {
-            rno: document.getElementById('modReplyId').value,
-            text: document.getElementById('modReplyText').value,
+            rno: document.getElementById("modReplyId").value,
+            text: document.getElementById("modReplyText").value,
           };
 
           const requestInfo = {
-            method: 'PATCH',
+            method: "PATCH",
             headers: {
-              'content-type': 'application/json',
+              "content-type": "application/json",
             },
             body: JSON.stringify(payload),
           };
@@ -534,11 +539,11 @@ uri="http://java.sun.com/jsp/jstl/core" %>
           fetch(URL, requestInfo).then((res) => {
             if (res.status === 200) {
               // modal 닫기
-              document.getElementById('modal-close').click();
+              document.getElementById("modal-close").click();
               fetchGetReplies(); // 수정 완료 후 1페이지 댓글 목록 요청이 들어가게끔 처리.
             } else {
-              alert('수정값에 문제가 있습니다. 내용을 확인하세요!');
-              document.getElementById('modReplyText').value = '';
+              alert("수정값에 문제가 있습니다. 내용을 확인하세요!");
+              document.getElementById("modReplyText").value = "";
               return;
             }
           });

@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,10 +27,17 @@ public class ImageController {
     페이지가 랜더링 될때 img에 작성된 요청 url을 통해 비동기 방식의 요청이 들어옵니다.
      */
 
-    @GetMapping("c:/develop/upload")
-    public ResponseEntity<?> getImage(HttpServletRequest request) {
-        String uri = request.getRequestURI();
-        File file = new File(uri);
+    @GetMapping("/{y}/{m}/{d}/{fileName}")
+    public ResponseEntity<?> getImage(@PathVariable String y,
+                                      @PathVariable String m,
+                                      @PathVariable String d,
+                                      @PathVariable String fileName) {
+
+        // 파일의 전체 경로를 생성(rootPath 합쳐서)
+        String fullPath = String.format("%s/%s/%s/%s/%s", rootPath, y, m, d, fileName);
+        log.info("[dbg] fullPath: {}", fullPath);
+
+        File file = new File(fullPath);
         ResponseEntity<byte[]> result = null;
 
         HttpHeaders headers = new HttpHeaders(); // 응답용 헤더 객체 생성

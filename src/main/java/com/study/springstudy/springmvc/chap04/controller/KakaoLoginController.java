@@ -38,8 +38,9 @@ public class KakaoLoginController {
     }
 
     // 약속된 redirect uri로 인가 코드가 옵니다.
-    @GetMapping("/auth/kakao")
+    @GetMapping("/oauth/kakao")
     public void authCodeKakao(@RequestParam String code) {
+        System.out.println("[dbg] code = " + code);
         log.info("인가 코드: {}", code);
 
         // 인가 코드를 가지고 카카오 인증 서버에게 토큰 발급을 요청하자

@@ -18,10 +18,36 @@ public class KakaoService {
     public void login(Map<String, String> params) {
 
         String accessToken = getKakaoAccessToken(params);
+        //발급받은 accesstoken으로 사용자 정보 가져오기
+        getKakaoUserInfo(accessToken);
+    }
+
+    private void getKakaoUserInfo(String accessToken) {
+        String requestUri="https://kapi.kakao.com/v2/user/me";
+
+        //요청 헤더
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + accessToken);
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+
+        //요청 보내기
+        RestTemplate template = new RestTemplate();
+        ResponseEntity<Map> responseEntity = template.exchange(
+                requestUri,
+                HttpMethod.POST,
+                new HttpEntity<>(headers),
+                Map.class
+        );
+
+        log.info("응답데이터 결과: {}", responseEntity.getBody());
+        System.out.println("[dbg] responseEntity = " + responseEntity.getBody());
+
     }
 
     // 토큰 발급 요청
     private String getKakaoAccessToken(Map<String, String> requestParam) {
+
+        //요청 URI
         String requestUri="https://kauth.kakao.com/oauth/token";
 
         // 요청 헤더 설정
@@ -54,7 +80,8 @@ public class KakaoService {
 
         // 응답 데이터에서 JSON 추출
         Map<String, Object> responseJson = responseEntity.getBody();
-        log.info("[dbg] 응답 JSON 데이터: {}", responseJson);
+        log.info("응답 JSON 데이터: {}", responseJson);
+        System.out.println("[dbg] responseJson = " + responseJson);
 
         // access token 추출(카카오 로그인 중인 사용자의 정보를 요청할 때 사용.
         String accessToken = (String) responseJson.get("access_token");

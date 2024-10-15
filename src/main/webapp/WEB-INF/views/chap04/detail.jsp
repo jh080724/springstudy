@@ -186,10 +186,10 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                   <div class="col-md-3">
                     <div class="form-group">
                       <div class="profile-box">
-                        <c:if test="${login.profile} == null">
+                        <c:if test="${login.profile == null}">
                           <img src="/assets/img/anonymous.jpg" alt="프사" />
                         </c:if>
-                        <c:if test="${login.profile} != null">
+                        <c:if test="${login.profile != null}">
                           <img src="/display/${login.profile}" alt="프사" />
                         </c:if>
                       </div>

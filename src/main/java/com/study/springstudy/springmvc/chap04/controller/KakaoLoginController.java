@@ -1,7 +1,7 @@
 package com.study.springstudy.springmvc.chap04.controller;
 
 import com.study.springstudy.springmvc.chap04.service.KakaoService;
-import lombok.Getter;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -39,7 +39,8 @@ public class KakaoLoginController {
 
     // 약속된 redirect uri로 인가 코드가 옵니다.
     @GetMapping("/oauth/kakao")
-    public void authCodeKakao(@RequestParam String code) {
+    public String authCodeKakao(@RequestParam String code,
+                                HttpSession session) {
         System.out.println("[dbg] code = " + code);
         log.info("인가 코드: {}", code);
 
@@ -50,7 +51,10 @@ public class KakaoLoginController {
         params.put("redirect", kakaoRedirectUri);
         params.put("code", code);
 
-        kakaoService.login(params);
+        kakaoService.login(params, session);
+
+        // 로그인 처리 완료되면 홈화면으로 보내자
+        return "redirect:/";
     }
 
 }

@@ -53,4 +53,6 @@ public class Reply {
     @Setter
     private String account;
 
+    private String profileImage; // member테이블과 조인을 위해서 추가.
+
 }

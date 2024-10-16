@@ -2,6 +2,7 @@ package com.study.springstudy.springmvc.chap04.controller;
 
 import com.study.springstudy.springmvc.chap04.dto.request.LoginRequestDTO;
 import com.study.springstudy.springmvc.chap04.dto.request.SignUpRequestDTO;
+import com.study.springstudy.springmvc.chap04.entity.Member;
 import com.study.springstudy.springmvc.chap04.service.LoginResult;
 import com.study.springstudy.springmvc.chap04.service.MemberService;
 import com.study.springstudy.springmvc.util.FileUtils;
@@ -64,6 +65,8 @@ public class MemberController {
         // 서버 로컬 경로에 파일 업로드 지시
         String savePath = FileUtils.uploadFile(dto.getProfileImage(), rootPath);
 
+        // 일반방식으로
+        dto.setLoginMethod(Member.LoginMethod.COMMON);
 
         boolean flag = memberService.join(dto, savePath);
 

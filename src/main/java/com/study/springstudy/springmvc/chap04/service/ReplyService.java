@@ -35,6 +35,7 @@ public class ReplyService {
         page.setAmount(5);
         page.setPageNo(pageNo);
 
+        // DB 쿼리
         List<Reply> replyList = mapper.findAll(boardNo, page);
 
         System.out.println("[dbg] 서비스: ReplyService:getList(): replyList = " + replyList);

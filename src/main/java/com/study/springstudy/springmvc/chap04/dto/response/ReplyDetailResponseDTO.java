@@ -21,6 +21,7 @@ public class ReplyDetailResponseDTO {
     private LocalDateTime regDate;
 
     private String profile; // 프로필 경로
+    private String loginMethod;
 
     // 엔터티를 dto로 바꾸는 생성자
     public ReplyDetailResponseDTO(Reply reply) {
@@ -30,5 +31,6 @@ public class ReplyDetailResponseDTO {
         this.regDate = reply.getReplyDate();
         this.account = reply.getAccount();
         this.profile = reply.getProfileImage();
+        this.loginMethod = reply.getLoginMethod();
     }
 }

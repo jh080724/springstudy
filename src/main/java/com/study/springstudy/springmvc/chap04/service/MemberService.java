@@ -7,21 +7,33 @@ import com.study.springstudy.springmvc.chap04.dto.response.LoginUserResponseDTO;
 import com.study.springstudy.springmvc.chap04.entity.Member;
 import com.study.springstudy.springmvc.chap04.mapper.MemberMapper;
 import com.study.springstudy.springmvc.util.LoginUtils;
+import jakarta.mail.Session;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.WebUtils;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 import static com.study.springstudy.springmvc.chap04.service.LoginResult.*;
+import static com.study.springstudy.springmvc.util.LoginUtils.LOGIN_KEY;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MemberService {
     private final MemberMapper memberMapper;
     private final PasswordEncoder encoder;
@@ -101,7 +113,7 @@ public class MemberService {
                 .build();
 
         // 세션에 로그인 한 회원 정보를 저장
-        session.setAttribute("login", dto);
+        session.setAttribute(LOGIN_KEY, dto);
 
         // 세션 수명 설정
         session.setMaxInactiveInterval(60 * 60);    // 1시간(3600초)
@@ -112,7 +124,7 @@ public class MemberService {
 
         //쿠키 삭제
         // -> 쿠키의 수명을 0으로 설정하여 다시 클라이언트로 전송 -> 자동 소멸
-        if(c!=null) {
+        if (c != null) {
             c.setMaxAge(0);
             c.setPath("/");
             response.addCookie(c);
@@ -128,6 +140,35 @@ public class MemberService {
         );
 
 
+    }
 
+    public void kakaoLogout(LoginUserResponseDTO dto, HttpSession session) {
+        String requestUri = "https://kapi.kakao.com/v1/user/logout";
+
+
+        String accessToken = (String) session.getAttribute("access_token");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + accessToken);
+
+        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+        params.add("target_id_type", "user_id");
+        params.add("target_id", dto.getAccount());
+
+        log.info("dto: ", dto.toString());
+        log.info("dto.getAccount: {}", dto.getAccount());
+
+        ResponseEntity<Map> responseEntity = new RestTemplate().exchange(
+                requestUri,
+                HttpMethod.POST,
+                new HttpEntity<>(params, headers),
+                Map.class
+        );
+
+        Map<String, Object> body = responseEntity.getBody();
+        log.info("응답 데이터: {}", body); // 로그아웃하는 사용자의 id
+
+        // 전달된 id를 활용해서, 만약, access token을 DB에 저장한 경우에는
+        // update 문 활용해서 처리해주면 됨.
     }
 }

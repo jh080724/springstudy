@@ -2,10 +2,12 @@ package com.study.springstudy.springmvc.chap04.controller;
 
 import com.study.springstudy.springmvc.chap04.dto.request.LoginRequestDTO;
 import com.study.springstudy.springmvc.chap04.dto.request.SignUpRequestDTO;
+import com.study.springstudy.springmvc.chap04.dto.response.LoginUserResponseDTO;
 import com.study.springstudy.springmvc.chap04.entity.Member;
 import com.study.springstudy.springmvc.chap04.service.LoginResult;
 import com.study.springstudy.springmvc.chap04.service.MemberService;
 import com.study.springstudy.springmvc.util.FileUtils;
+import com.study.springstudy.springmvc.util.LoginUtils;
 import com.study.springstudy.springmvc.util.MailSenderService;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.Cookie;
@@ -23,6 +25,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.WebUtils;
 
+import static com.study.springstudy.springmvc.util.LoginUtils.*;
+
 @Controller
 @RequestMapping("/members")
 @RequiredArgsConstructor
@@ -31,6 +35,12 @@ public class MemberController {
 
     @Value("${file.upload.root-path}")
     private String rootPath;
+
+    @Value("${sns.kakao.app-key}")
+    private String appKey;
+
+    @Value("${sns.kakao.logout-redirect}")
+    private String logoutRedirect;
 
     private final MemberService memberService;
     private final MailSenderService mailSenderService;
@@ -65,7 +75,7 @@ public class MemberController {
         // 서버 로컬 경로에 파일 업로드 지시
         String savePath = FileUtils.uploadFile(dto.getProfileImage(), rootPath);
 
-        // 일반방식으로
+        // 일반방식으로(우리 사이트를 통해)으로 회원가입
         dto.setLoginMethod(Member.LoginMethod.COMMON);
 
         boolean flag = memberService.join(dto, savePath);
@@ -123,6 +133,20 @@ public class MemberController {
             memberService.autoLoginClear(request, response);
         }
 
+        // sns 로그인 상태인지를 확인
+        LoginUserResponseDTO dto
+                = (LoginUserResponseDTO) session.getAttribute(LOGIN_KEY);
+
+        if(dto.getLoginMethod().equals("KAKAO")){
+            memberService.kakaoLogout(dto, session);
+            /*
+            String reqUri = "https://kauth.kakao.com/oauth/logout";
+            reqUri += "?client_id=" + appKey;
+            reqUri += "&logout_redirect_uri=" + logoutRedirect;
+
+            return "redirect:" + reqUri;
+             */
+        }
 
         //세션에서 로그인 정보 기록 삭제
         session.removeAttribute("login");

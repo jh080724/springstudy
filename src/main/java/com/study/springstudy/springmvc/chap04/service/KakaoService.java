@@ -28,6 +28,8 @@ public class KakaoService {
     public void login(Map<String, String> params, HttpSession session) {
 
         String accessToken = getKakaoAccessToken(params);
+        session.setAttribute("access_token", accessToken);
+
         //발급받은 accesstoken으로 사용자 정보 가져오기
         KakaoUserResponseDTO kakaoUser = getKakaoUserInfo(accessToken);
 
@@ -72,6 +74,7 @@ public class KakaoService {
 
         log.info("응답데이터 결과: {}", responseEntity.getBody());
         System.out.println("[dbg] responseEntity = " + responseEntity.getBody());
+        log.info("응답 데이터 결과: {}", userInfo);
 
         return userInfo;
     }
